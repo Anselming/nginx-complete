@@ -13,4 +13,6 @@ then
 	apk add --no-cache vim nano curl nginx bash wget -q
 fi
 
+sed -i "s/##PORTAINTERNA##/${PORTAINTERNA}/" /etc/nginx/conf.d/default.conf
+
 exec "$@"
