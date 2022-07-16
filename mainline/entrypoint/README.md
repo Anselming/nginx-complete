@@ -19,4 +19,5 @@ Basta rodar a linha de comando abaixo
 ### A imagem pode não estar no dockerhub
 Caso a imagem não possa ser encontrada no dockerhub, faça download e crie localmente a imagem com o comando.
 E após isso, execute o comando anterior.
+    
     docker -t <logindocker>/nginxcomplete:entrypoint
