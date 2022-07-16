@@ -1,0 +1,12 @@
+FROM alpine:3.15
+LABEL maintainer="ANSELME Containers <thiago@anselme.com.br>"
+
+RUN apk add rust
+WORKDIR /home/rust/app
+VOLUME /home/rust/app
+
+COPY app/ .
+RUN rustc main.rs
+
+ENTRYPOINT ["./main"]
+
