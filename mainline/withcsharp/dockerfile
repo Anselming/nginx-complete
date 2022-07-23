@@ -1,16 +1,37 @@
-FROM alpine:3.15 AS stage1
+FROM ubuntu:22.04 AS stage1
 LABEL maintainer="ANSELME Containers <thiago@anselme.com.br>"
 
-RUN apk add bash icu-libs krb5-libs libgcc libintl libssl1.1 libstdc++ zlib
-RUN apk add libgdiplus --repository https://dl-3.alpinelinux.org/alpine/edge/testing/
-WORKDIR /home/csharp/app
-VOLUME /home/csharp/app
+WORKDIR /app
+COPY    /app .
 
-COPY app/ .
-#RUN gcc main.c -static -o main
+RUN     apt-get update; \
+        apt-get install -y wget; \
+        apt-get install -y apt-transport-https;
 
-# FROM gcr.io/distroless/static-debian11 AS stage2
-# COPY --from=stage1 /home/c/app/ /
-# ENTRYPOINT ["./main"]
+RUN     wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb; \
+        dpkg -i packages-microsoft-prod.deb; \
+        rm packages-microsoft-prod.deb;
 
-ENTRYPOINT ["sh"]
+RUN     apt-get update; \
+        apt-get install -y dotnet-sdk-6.0; \
+        apt-get install -y aspnetcore-runtime-6.0;
+
+RUN     dotnet build
+
+RUN     mkdir /dotnet; \
+        apt-get install -y curl; \
+        curl -sSl https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.sh -o /app/bin/Debug/net6.0/dotnet-install.sh; \
+        chmod +x /app/bin/Debug/net6.0/dotnet-install.sh;
+
+FROM alpine:3.15 AS stage2
+ARG     DOTNET6_VERSION=6.0.7
+WORKDIR /app
+COPY --from=stage1 /app/bin/Debug/net6.0/ .
+
+RUN     apk update; \ 
+        apk add --no-cache libgdiplus --repository https://dl-3.alpinelinux.org/alpine/edge/testing/ ; \
+        apk add --no-cache bash icu-libs krb5-libs libc6-compat libgcc libintl libssl1.1 libstdc++ zlib; 
+
+RUN echo $DOTNET6_VERSION
+RUN     ./dotnet-install.sh --runtime dotnet --version $DOTNET6_VERSION  --install-dir /app;        
+CMD ["./dotnet", "app.dll"]
