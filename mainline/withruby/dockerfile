@@ -1,14 +1,18 @@
-FROM alpine:3.15 AS stage1
-LABEL maintainer="ANSELME Containers <thiago@anselme.com.br>"
+FROM    archlinux AS stage1
+LABEL   maintainer="ANSELME Containers <thiago@anselme.com.br>"
+WORKDIR /app
 
-RUN apk add rust
-WORKDIR /home/rust/app
-VOLUME /home/rust/app
+RUN     pacman -Sy; \
+        pacman -S --noconfirm ruby-irb;
 
 COPY app/ .
-RUN rustc main.rs
 
-FROM alpine:3.15 AS stage2
-RUN apk add libgcc
-COPY --from=stage1 /home/rust/app/ /
-ENTRYPOINT ["./main"]
+
+FROM    alpine AS stage2
+WORKDIR /app
+COPY    --from=stage1 /app .
+RUN     apk add --update ruby
+CMD ["ruby", "app.rb"]
+# FROM gcr.io/distroless/static-debian11 AS stage2
+# COPY --from=stage1 /home/c/app/ /
+# ENTRYPOINT ["./main"]
