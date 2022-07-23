@@ -3,7 +3,6 @@
 void main()
 {
     char* boasvindas = "Olá Mundo, Thiago Anselme escrito em C/C++ com nome!";    
-    printf("%s\\n",boasvindas);
-    printf("aa");
+    printf("%s\\naaa",boasvindas);
     return;
 }
