@@ -1,14 +1,17 @@
-FROM alpine:3.15 AS stage1
-LABEL maintainer="ANSELME Containers <thiago@anselme.com.br>"
+# Esse primeiro estágio é completamente teórico para fins de estudo e não tem necessidade prática.
+#       apenas o segundo estágio é realmente necessário
+FROM        python AS stage1
+LABEL       maintainer="ANSELME Containers <thiago@anselme.com.br>"
+WORKDIR     /app
+COPY        app/ .
 
-RUN apk add rust
-WORKDIR /home/rust/app
-VOLUME /home/rust/app
+# ------------------------------
 
-COPY app/ .
-RUN rustc main.rs
-
-FROM alpine:3.15 AS stage2
-RUN apk add libgcc
-COPY --from=stage1 /home/rust/app/ /
-ENTRYPOINT ["./main"]
+FROM        alpine AS stage2
+WORKDIR     /app
+COPY        --from=stage1 app/ .
+ENV         PYTHONUNBUFFERED=1
+RUN         apk add --update --no-cache python3 && ln -sf python3 /usr/bin/python
+RUN         python3 -m ensurepip
+RUN         pip3 install --no-cache --upgrade pip setuptools
+CMD         [ "python", "app.py" ]
