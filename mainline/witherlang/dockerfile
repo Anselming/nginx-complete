@@ -1,25 +1,10 @@
-FROM ubuntu:latest AS stage1
+FROM alpine:latest AS stage1
 LABEL maintainer="ANSELME Containers <thiago@anselme.com.br>"
 
 WORKDIR /app
 COPY    /app .
 
-RUN     apt-get update; \
-        apt-get install -y erlang;
-
+RUN     apk update; \ 
+        apk --update add erlang && rm -rf /var/cache/apk/*
 RUN     erlc app.erl
 CMD     ["erl", "-noshell", "-s", "app" ,"start" ,"-s" ,"init", "stop"]
-
-#CMD bash
-
-# FROM alpine:3.15 AS stage2
-# WORKDIR /app
-# COPY --from=stage1 /app/app.beam .
-
-# RUN     apk update; \ 
-#         apk add --no-cache libgdiplus --repository https://dl-3.alpinelinux.org/alpine/edge/testing/ ; \
-#         apk add --no-cache bash icu-libs krb5-libs libc6-compat libgcc libintl libssl1.1 libstdc++ zlib; 
-
-# RUN echo $DOTNET6_VERSION
-# RUN     ./dotnet-install.sh --runtime dotnet --version $DOTNET6_VERSION  --install-dir /app;        
-# CMD ["./dotnet", "app.dll"]
