@@ -1,17 +1,10 @@
 FROM        node:12.18.1
-#ENV         NODE_ENV=production
-WORKDIR     /app
-COPY        app/ .
-#COPY        ["package.json", "package-lock.json*", "./"]
-
-RUN         npm install
-RUN         npm install -g nodemon
-
-COPY        . .
-
 VOLUME      /app
-EXPOSE      80
-#ENTRYPOINT ["nodemon", "app.js" ]
-CMD [ "bash" ]
+RUN         echo "Volume criado"
+WORKDIR     /app
 
-# docker run -it --name node10 -p 9010:80 -v $(pwd):/app withnode
+COPY        docker-entrypoint.sh /
+ENTRYPOINT  ["/docker-entrypoint.sh"]
+
+EXPOSE      80
+CMD         ["nodemon", "app.js" ]
