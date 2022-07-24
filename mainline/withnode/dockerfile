@@ -1,11 +1,17 @@
 FROM        node:12.18.1
 #ENV         NODE_ENV=production
 WORKDIR     /app
-VOLUME      /app
+COPY        app/ .
+#COPY        ["package.json", "package-lock.json*", "./"]
 
 RUN         npm install
 RUN         npm install -g nodemon
 
+COPY        . .
+
+VOLUME      /app
 EXPOSE      80
 #ENTRYPOINT ["nodemon", "app.js" ]
 CMD [ "bash" ]
+
+# docker run -it --name node10 -p 9010:80 -v $(pwd):/app withnode
