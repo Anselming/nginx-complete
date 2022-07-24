@@ -1,0 +1,14 @@
+FROM        node:12.18.1 AS stage1
+VOLUME      /app
+RUN         echo "Volume criado"
+WORKDIR     /app
+
+COPY        docker-entrypoint.sh /
+ENTRYPOINT  ["/docker-entrypoint.sh"]
+
+EXPOSE      80
+CMD         ["nodemon", "app.js" ]
+
+
+
+# docker run -it --name node42 -p 9042:80 -v /home/dockerfiles/nginx-complete/mainline/withnode/app:/app withnode
