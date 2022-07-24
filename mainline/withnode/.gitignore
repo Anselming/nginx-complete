@@ -4,4 +4,3 @@ logs/
 *.md
 .cache
 node_modules
-.gitignore

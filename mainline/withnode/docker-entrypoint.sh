@@ -2,15 +2,11 @@
 # vim:sw=4:ts=4:et
 set -e
 
-if ${ANSELMELOG} -eq "true" 
-then
-	apk add --no-cache vim nano curl nginx bash wget -v
-	echo "vim, nano, curl, nginx, bash e wget instalados"
-	echo "Instalação finalizada"
+echo "Docker-Entrypoint iniciado"
+cd /app
+npm install
+npm install -g nodemon
 
-	else
-
-	apk add --no-cache vim nano curl nginx bash wget -q
-fi
+echo "Docker-Entrypoint finalizado"
 
 exec "$@"
